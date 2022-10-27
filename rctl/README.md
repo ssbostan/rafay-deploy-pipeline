@@ -23,3 +23,15 @@ Download Kubeconfig to be used by Kubectl:
 ```bash
 rctl download kubeconfig -f you-name-it
 ```
+
+Apply Rafay manifest:
+
+```bash
+rctl apply -f your-file.yaml
+```
+
+Delete resources by using manifest:
+
+```bash
+rctl delete -f your-file.yaml
+```
