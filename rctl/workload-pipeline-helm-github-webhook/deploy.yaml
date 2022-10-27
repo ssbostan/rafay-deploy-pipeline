@@ -1,0 +1,60 @@
+apiVersion: infra.k8smgmt.io/v3
+kind: Namespace
+metadata:
+  name: london-tube-lines
+  project: TeamB_Seyyed_Dev
+spec:
+  placement:
+    labels:
+      - key: rafay.dev/clusterName
+        value: shared-nonprod-use2-aks
+---
+apiVersion: integrations.k8smgmt.io/v3
+kind: Repository
+metadata:
+  name: london-tube-lines
+  project: TeamB_Seyyed_Dev
+spec:
+  endpoint: https://github.com/ssbostan/london-tube-lines.git
+  type: Git
+---
+apiVersion: apps.k8smgmt.io/v3
+kind: Workload
+metadata:
+  name: london-tube-lines
+  project: TeamB_Seyyed_Dev
+spec:
+  version: v1.0.0
+  namespace: london-tube-lines
+  placement:
+    labels:
+      - key: rafay.dev/clusterName
+        value: shared-nonprod-use2-aks
+  artifact:
+    type: Helm
+    artifact:
+      repository: london-tube-lines
+      revision: master
+      chartPath:
+        name: /helm
+---
+apiVersion: gitops.k8smgmt.io/v3
+kind: Pipeline
+metadata:
+  name: london-tube-lines
+  project: TeamB_Seyyed_Dev
+spec:
+  active: true
+  stages:
+    - name: deploy
+      type: DeployWorkload
+      config:
+        workload: london-tube-lines
+  triggers:
+    - name: london-tube-lines-trigger
+      type: Webhook
+      config:
+        repo:
+          provider: Github
+          repository: london-tube-lines
+          revision: master
